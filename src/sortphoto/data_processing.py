@@ -74,37 +74,29 @@ def process_files_by_type(file_paths, output_path, dry_run=False):
 def execute_operations(operations, dry_run=False, silent=False):
     """Execute the file operations."""
     total_operations = len(operations)
+    
+    print(f"Organizing Files... (0/{total_operations})")
+    for idx, operation in enumerate(operations, 1):
+        source = operation['source']
+        destination = operation['destination']
+        link_type = operation['link_type']
+        dir_path = os.path.dirname(destination)
 
-    with Progress(
-        TextColumn("[progress.description]{task.description}"),
-        BarColumn(),
-        TimeElapsedColumn(),
-        transient=True
-    ) as progress:
-        task = progress.add_task("Organizing Files...", total=total_operations)
-        for operation in operations:
-            source = operation['source']
-            destination = operation['destination']
-            link_type = operation['link_type']
-            dir_path = os.path.dirname(destination)
+        if dry_run:
+            message = f"Dry run: would create {link_type} from '{source}' to '{destination}'"
+        else:
+            # Ensure the directory exists before performing the operation
+            os.makedirs(dir_path, exist_ok=True)
 
-            if dry_run:
-                message = f"Dry run: would create {link_type} from '{source}' to '{destination}'"
-            else:
-                # Ensure the directory exists before performing the operation
-                os.makedirs(dir_path, exist_ok=True)
+            try:
+                if link_type == 'hardlink':
+                    os.link(source, destination)
+                else:
+                    os.symlink(source, destination)
+                message = f"Created {link_type} from '{source}' to '{destination}'"
+            except Exception as e:
+                message = f"Error creating {link_type} from '{source}' to '{destination}': {e}"
 
-                try:
-                    if link_type == 'hardlink':
-                        os.link(source, destination)
-                    else:
-                        os.symlink(source, destination)
-                    message = f"Created {link_type} from '{source}' to '{destination}'"
-                except Exception as e:
-                    message = f"Error creating {link_type} from '{source}' to '{destination}': {e}"
-
-            progress.advance(task)
-
-            # Silent mode handling
-            
-            print(message)
+        # Silent mode handling
+        if not silent:
+            print(f"[{idx}/{total_operations}] {message}")

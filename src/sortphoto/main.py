@@ -4,8 +4,8 @@ import getopt, sys
 from file_utils import collect_file_paths,display_directory_tree,simulate_directory_tree, display_simulated_tree 
 from data_processing import process_files_by_date, process_files_by_type,execute_operations
 
-DATA_PATH = "/mnt/d/Pictures"
-OUTPUT_PATH = "/mnt/d/Organize_Pictures"
+DATA_PATH = "/mnt/e/media"
+OUTPUT_PATH = "/mnt/e/organized_media"
 # Remove 1st argument from the
 # list of command line arguments
 argumentList = sys.argv[1:]
@@ -32,7 +32,7 @@ def get_yes_no(prompt):
 def main():
     dry_run = True
     mode=""
-    output_path = os.path.join(os.path.dirname(DATA_PATH), 'organized_folder')
+    output_path = OUTPUT_PATH
 
     print("-" * 50)
     try:
@@ -79,7 +79,7 @@ def main():
         # mode = get_mode_selection()
         file_paths = collect_file_paths(DATA_PATH)
         # Confirm successful output path
-        output_path = os.path.join(os.path.dirname(DATA_PATH), 'organized_folder')
+        output_path = OUTPUT_PATH
         print(f"Output path successfully set to: {output_path}")
         print("-" * 50)
         if mode == 'date':
