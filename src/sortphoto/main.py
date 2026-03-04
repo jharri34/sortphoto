@@ -30,9 +30,9 @@ DEBUG_PREFIX = "[DEBUG]"
 argumentList = sys.argv[1:]
 
 # Options
-options = "hdt"
+options = "hdt i:o:"
 # Long options
-long_options = ["Help", "date", "type"]
+long_options = ["Help", "date", "type", "input=", "output="]
 
 def get_yes_no(prompt):
     """Prompt the user for a yes/no response."""
@@ -52,6 +52,7 @@ def main():
     dry_run = True
     mode=""
     output_path = OUTPUT_PATH
+    input_path = DATA_PATH
 
     print(SEPARATOR)
     print(f"{DEBUG_PREFIX} Raw command-line arguments: {sys.argv}")
@@ -80,6 +81,15 @@ def main():
                 print(PROCESS_BY_TYPE)
                 mode = 'type'
                 print(f"{DEBUG_PREFIX} Mode set to: {mode}")
+            
+            elif currentArgument in ("-i", "--input"):
+                input_path = currentValue
+                print(f"{DEBUG_PREFIX} Input path set to: {input_path}")
+            
+            elif currentArgument in ("-o", "--output"):
+                output_path = currentValue
+                print(f"{DEBUG_PREFIX} Output path set to: {output_path}")
+            
             else:
                 print(ERROR_MESSAGE)
                 exit
@@ -93,11 +103,11 @@ def main():
     
     # Start processing files
     start_time = time.time()
-    file_paths = collect_file_paths(DATA_PATH)
+    file_paths = collect_file_paths(input_path)
     end_time = time.time()
     print(SEPARATOR)
     print(TREE_BEFORE_MESSAGE)
-    # display_directory_tree(DATA_PATH)
+    # display_directory_tree(input_path)
     print("*" * 50)
     # Confirm successful output path
     print(f"{OUTPUT_PATH_MESSAGE} {output_path}")
@@ -107,9 +117,8 @@ def main():
     
     if mode: 
         # mode = get_mode_selection()
-        file_paths = collect_file_paths(DATA_PATH)
+        file_paths = collect_file_paths(input_path)
         # Confirm successful output path
-        output_path = OUTPUT_PATH
         print(f"{OUTPUT_PATH_MESSAGE} {output_path}")
         print(SEPARATOR)
         if mode == 'date':
