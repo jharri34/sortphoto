@@ -35,12 +35,18 @@ def main():
     output_path = OUTPUT_PATH
 
     print("-" * 50)
+    print(f"[DEBUG] Raw command-line arguments: {sys.argv}")
+    print(f"[DEBUG] Parsed argument list: {argumentList}")
+    
     try:
         # Parsing argument
         arguments, values = getopt.getopt(argumentList, options, long_options)
+        print(f"[DEBUG] Parsed arguments: {arguments}")
+        print(f"[DEBUG] Remaining values: {values}")
 
          # checking each argument
         for currentArgument, currentValue in arguments:
+            print(f"[DEBUG] Processing argument: {currentArgument} with value: {currentValue}")
             if currentArgument in ("-h", "--Help"):
                 print("Please choose the mode to organize your files:")
                 print("-d, -date By Date")
@@ -48,11 +54,13 @@ def main():
             
             elif currentArgument in ("-d", "--date"):
                 print ("Process files by date:", sys.argv[0])
-                mode ='date' 
+                mode ='date'
+                print(f"[DEBUG] Mode set to: {mode}")
             
             elif currentArgument in ("-t", "--type"):
                 print (("Process files by type ") )
                 mode = 'type'
+                print(f"[DEBUG] Mode set to: {mode}")
             else:
                 print("Something went wrong try agin")
                 exit
@@ -60,6 +68,9 @@ def main():
     except getopt.error as err:
         print(str(err))
         exit
+    
+    print(f"[DEBUG] Final mode value: '{mode}'")
+    print("-" * 50)
     
     # Start processing files
     start_time = time.time()
@@ -97,25 +108,27 @@ def main():
         display_simulated_tree(simulated_tree)
         print("-" * 50)
         # Ask user if they want to proceed
-    proceed = get_yes_no("Would you like to proceed with these changes? (yes/no): ")
-    if proceed:
-        # Create the output directory now
-        os.makedirs(output_path, exist_ok=True)
+        proceed = get_yes_no("Would you like to proceed with these changes? (yes/no): ")
+        if proceed:
+            # Create the output directory now
+            os.makedirs(output_path, exist_ok=True)
 
-        # Perform the actual file operations
-        message = "Performing file operations..."
+            # Perform the actual file operations
+            message = "Performing file operations..."
 
-        print(message)
-        execute_operations(
-        operations,
-        dry_run=False,
-       
-        )
+            print(message)
+            execute_operations(
+            operations,
+            dry_run=False,
+           
+            )
 
-        message = "The files have been organized successfully."
-        print("-" * 50)
-        print(message)
-        print("-" * 50)
+            message = "The files have been organized successfully."
+            print("-" * 50)
+            print(message)
+            print("-" * 50)
+    else:
+        print("[DEBUG] No mode selected. Please use -d (date) or -t (type)")
    
 if __name__=="__main__":
     main()
